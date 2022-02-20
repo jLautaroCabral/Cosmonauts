@@ -2,24 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VoxelStencilCircle : VoxelStencil
+namespace CustomMarchingSquares
 {
-    private int sqrRadius;
-
-    public override void Initialize(bool fillType, int radius)
+    public class VoxelStencilCircle : VoxelStencil
     {
-        base.Initialize(fillType, radius);
-        sqrRadius = radius * radius;
-    }
+        private int sqrRadius;
 
-    public override bool Apply(int x, int y, bool voxel)
-    {
-        x -= centerX;
-        y -= centerY;
-        if(x * x + y * y <= sqrRadius)
+        public override void Initialize(bool fillType, int radius)
         {
-            return fillType;
+            base.Initialize(fillType, radius);
+            sqrRadius = radius * radius;
         }
-        return voxel;
+
+        public override bool Apply(int x, int y, bool voxel)
+        {
+            x -= centerX;
+            y -= centerY;
+            if (x * x + y * y <= sqrRadius)
+            {
+                return fillType;
+            }
+            return voxel;
+        }
     }
 }
