@@ -63,7 +63,7 @@ namespace CustomMarchingSquares
 
         private void Update()
         {
-            if (Input.GetMouseButton(0))
+            if (Input.GetMouseButtonDown(0))
             {
                 RaycastHit hitInfo;
                 if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo))

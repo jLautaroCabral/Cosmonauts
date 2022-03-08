@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 [SelectionBase]
+//[RequireComponent(typeof(PolygonCollider2D))]
 public class VoxelGrid : MonoBehaviour {
 
 	public int resolution;
@@ -23,7 +24,26 @@ public class VoxelGrid : MonoBehaviour {
 
 	private Voxel dummyX, dummyY, dummyT;
 
-	public void Initialize (int resolution, float size) {
+	private List<PolygonCollider2D> polygonColliderList;
+
+	PolygonCollider2D helperPolygonCollider2D;
+
+	private void Awake()
+    {
+		polygonColliderList = new List<PolygonCollider2D>();
+	}
+
+	private void ClearColliders()
+    {
+        for (int i = 0; i < polygonColliderList.Count; i++)
+        {
+			Destroy(polygonColliderList[i]);
+        }
+		polygonColliderList.Clear();
+
+	}
+
+    public void Initialize (int resolution, float size) {
 		this.resolution = resolution;
 		gridSize = size;
 		voxelSize = size / resolution;
@@ -65,6 +85,8 @@ public class VoxelGrid : MonoBehaviour {
 		vertices.Clear();
 		triangles.Clear();
 		mesh.Clear();
+
+		ClearColliders();
 
 		if (xNeighbor != null) {
 			dummyX.BecomeXDummyOf(xNeighbor.voxels[0], gridSize);
@@ -135,56 +157,116 @@ public class VoxelGrid : MonoBehaviour {
 		if (d.state) {
 			cellType |= 8;
 		}
+
 		switch (cellType) {
 		case 0:
 			return;
+
 		case 1:
-			AddTriangle(a.position, a.yEdgePosition, a.xEdgePosition);
+			CreatePolygon(new Vector2[] { a.position, a.yEdgePosition, a.xEdgePosition }, PolygonType.Triangle);
 			break;
+
 		case 2:
-			AddTriangle(b.position, a.xEdgePosition, b.yEdgePosition);
+			CreatePolygon(new Vector2[] { b.position, a.xEdgePosition, b.yEdgePosition }, PolygonType.Triangle);
 			break;
+
 		case 3:
-			AddQuad(a.position, a.yEdgePosition, b.yEdgePosition, b.position);
+			CreatePolygon(new Vector2[] { a.position, a.yEdgePosition, b.yEdgePosition, b.position }, PolygonType.Quad);
 			break;
+
 		case 4:
-			AddTriangle(c.position, c.xEdgePosition, a.yEdgePosition);
+			CreatePolygon(new Vector2[] { c.position, c.xEdgePosition, a.yEdgePosition }, PolygonType.Triangle);
 			break;
+
 		case 5:
-			AddQuad(a.position, c.position, c.xEdgePosition, a.xEdgePosition);
+			CreatePolygon(new Vector2[] { a.position, c.position, c.xEdgePosition, a.xEdgePosition }, PolygonType.Quad);
 			break;
+
 		case 6:
-			AddTriangle(b.position, a.xEdgePosition, b.yEdgePosition);
-			AddTriangle(c.position, c.xEdgePosition, a.yEdgePosition);
+			CreatePolygon(new Vector2[] { b.position, a.xEdgePosition, b.yEdgePosition }, PolygonType.Triangle);
+			CreatePolygon(new Vector2[] { c.position, c.xEdgePosition, a.yEdgePosition }, PolygonType.Triangle);
 			break;
+
 		case 7:
-			AddPentagon(a.position, c.position, c.xEdgePosition, b.yEdgePosition, b.position);
+			CreatePolygon(new Vector2[] { a.position, c.position, c.xEdgePosition, b.yEdgePosition, b.position }, PolygonType.Pentagon);
 			break;
+
 		case 8:
-			AddTriangle(d.position, b.yEdgePosition, c.xEdgePosition);
+			CreatePolygon(new Vector2[] { d.position, b.yEdgePosition, c.xEdgePosition }, PolygonType.Triangle);
 			break;
+
 		case 9:
-			AddTriangle(a.position, a.yEdgePosition, a.xEdgePosition);
-			AddTriangle(d.position, b.yEdgePosition, c.xEdgePosition);
+			CreatePolygon(new Vector2[] { a.position, a.yEdgePosition, a.xEdgePosition }, PolygonType.Triangle);
+			CreatePolygon(new Vector2[] { d.position, b.yEdgePosition, c.xEdgePosition }, PolygonType.Triangle);
 			break;
+
 		case 10:
-			AddQuad(a.xEdgePosition, c.xEdgePosition, d.position, b.position);
+			CreatePolygon(new Vector2[] { a.xEdgePosition, c.xEdgePosition, d.position, b.position }, PolygonType.Quad);
 			break;
+
 		case 11:
-			AddPentagon(b.position, a.position, a.yEdgePosition, c.xEdgePosition, d.position);
+			CreatePolygon(new Vector2[] { b.position, a.position, a.yEdgePosition, c.xEdgePosition, d.position }, PolygonType.Pentagon);
 			break;
+
 		case 12:
-			AddQuad(a.yEdgePosition, c.position, d.position, b.yEdgePosition);
+			CreatePolygon(new Vector2[] { a.yEdgePosition, c.position, d.position, b.yEdgePosition }, PolygonType.Quad);
 			break;
+
 		case 13:
-			AddPentagon(c.position, d.position, b.yEdgePosition, a.xEdgePosition, a.position);
+			CreatePolygon(new Vector2[] { c.position, d.position, b.yEdgePosition, a.xEdgePosition, a.position }, PolygonType.Pentagon);
 			break;
+
 		case 14:
-			AddPentagon(d.position, b.position, a.xEdgePosition, a.yEdgePosition, c.position);
+			CreatePolygon(new Vector2[] { d.position, b.position, a.xEdgePosition, a.yEdgePosition, c.position }, PolygonType.Pentagon);
 			break;
+
 		case 15:
-			AddQuad(a.position, c.position, d.position, b.position);
+			CreatePolygon(new Vector2[] { a.position, c.position, d.position, b.position }, PolygonType.Quad);
 			break;
+		}
+
+		List<Vector2> vertices2D = new List<Vector2>();
+		foreach(Vector3 point in vertices)
+        {
+			vertices2D.Add(point);
+		}
+
+		//if (polygonCollider != null)
+			//Destroy(polygonCollider);
+
+		//polygonCollider = gameObject.AddComponent(typeof(PolygonCollider2D)) as PolygonCollider2D;
+		//polygonCollider = Component
+		//polygonCollider.points = vertices2D.ToArray();
+	}
+
+	private enum PolygonType { Triangle, Quad, Pentagon }
+	private void CreatePolygon(Vector2[] polygonPoints, PolygonType polygonType)
+    {
+		switch(polygonType)
+        {
+			case PolygonType.Triangle:
+				AddTriangle(polygonPoints[0], polygonPoints[1], polygonPoints[2]);
+				helperPolygonCollider2D = gameObject.AddComponent<PolygonCollider2D>();
+				helperPolygonCollider2D.usedByComposite = true;
+				helperPolygonCollider2D.points = new Vector2[] { polygonPoints[0], polygonPoints[1], polygonPoints[2]};
+				polygonColliderList.Add(helperPolygonCollider2D);
+				break;
+
+			case PolygonType.Quad:
+				AddQuad(polygonPoints[0], polygonPoints[1], polygonPoints[2], polygonPoints[3]);
+				helperPolygonCollider2D = gameObject.AddComponent<PolygonCollider2D>();
+				helperPolygonCollider2D.usedByComposite = true;
+				helperPolygonCollider2D.points = new Vector2[] { polygonPoints[0], polygonPoints[1], polygonPoints[2], polygonPoints[3] };
+				polygonColliderList.Add(helperPolygonCollider2D);
+				break;
+
+			case PolygonType.Pentagon:
+				AddPentagon(polygonPoints[0], polygonPoints[1], polygonPoints[2], polygonPoints[3], polygonPoints[4]);
+				helperPolygonCollider2D = gameObject.AddComponent<PolygonCollider2D>();
+				helperPolygonCollider2D.usedByComposite = true;
+				helperPolygonCollider2D.points = new Vector2[] { polygonPoints[0], polygonPoints[1], polygonPoints[2], polygonPoints[3], polygonPoints[4] };
+				polygonColliderList.Add(helperPolygonCollider2D);
+				break;
 		}
 	}
 
