@@ -133,7 +133,6 @@ GameObject:
   m_Component:
   - component: {fileID: 193135751}
   - component: {fileID: 193135750}
-  - component: {fileID: 193135749}
   - component: {fileID: 193135752}
   m_Layer: 0
   m_Name: PlanetPhysics
@@ -142,28 +141,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!66 &193135749
-CompositeCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 193135748}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_GeometryType: 1
-  m_GenerationType: 0
-  m_EdgeRadius: 0
-  m_ColliderPaths: []
-  m_CompositePaths:
-    m_Paths: []
-  m_VertexDistance: 0.0005
-  m_OffsetDistance: 0.00005
 --- !u!50 &193135750
 Rigidbody2D:
   serializedVersion: 4
@@ -274,8 +251,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   size: 2
-  voxelResolution: 3
-  chunkResolution: 4
+  voxelResolution: 6
+  chunkResolution: 8
   voxelGridPrefab: {fileID: 11400000, guid: 336f31b3fb8e941b398b8a96aae18062, type: 3}
 --- !u!4 &739522319
 Transform:

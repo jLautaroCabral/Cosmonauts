@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CustomMarchingSquares
+namespace CatMarchingSquares
 {
     public class VoxelStencilCircle : VoxelStencil
     {
